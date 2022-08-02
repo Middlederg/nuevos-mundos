@@ -2,7 +2,7 @@
         @(IsHighlighted ? "outline outline-slate-500 outline-offset-2 md:outline-offset-4 outline-2" : "outline-none")
        rounded-lg p-1 md:p-1.5"
        style="border: 0.15em solid #@InnerCard.Biome.Color">
-       as
+       
     <input type="radio"
            id="@GroupName"
            value="@GroupName"
@@ -10,9 +10,17 @@
            class="hidden"
            @onchange="(args) => CardSelected()" />
 
-    <span style="background-color:#@InnerCard.Biome.Color" class="w-full h-full flex items-center justify-center rounded-lg text-white">
+    <span style="background-color:#@InnerCard.Biome.Color" class="w-full h-full flex flex-col rounded-lg text-white">
+        <span class="flex justify-between px-2 text-lg">
+            <span class="font-semibold font-mono">
+                @InnerCard.Number
+            </span>
+            <span>
+                <CardIcon Biome="InnerCard.Biome" />
+            </span>
+        </span>
         <span class="flex flex-col items-center">
-            sadafsdf
+            
         </span>
     </span>
 

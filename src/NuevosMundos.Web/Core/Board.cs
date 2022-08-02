@@ -57,7 +57,7 @@ namespace NuevosMundos.Core
             {
                 foreach (var number in new int[] {  card.FirstNumber, card.SecondNumber })
                 {
-                    var pile = GetPileByLocation(card.FirstNumber);
+                    var pile = GetPileByLocation(number);
                     if (pile is not null && pile.HasCard)
                     {
                         var takenCard = pile.Take();

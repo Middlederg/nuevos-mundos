@@ -2,34 +2,88 @@
 
 <PageTitle>Nuevos mundos</PageTitle>
 
-<h1>Hello, world!</h1>
-
 <section class="grid grid-cols-7">
 
-    @foreach (var pile in board.Piles)
+    @foreach (var (pile, index) in board.Piles.Select((item, index) => (item, index)))
     {
-        <div class="border-2 rounded p-6">
-            @pile.Top?.ToString()
+        <div class="flex flex-col items-center space-y-1">
+            <div class="font-semibold">
+                <span>
+                    @index
+                </span>
+                @if (pile is DiscardPile)
+                {
+                    <span class="ml-2">[Discard pile]</span>
+                }
+                @if (pile is DrawPile)
+                {
+                    <span class="ml-2">[Deck]</span>
+                }
+            </div>
+            <div class="flex">
+                @if (pile.CanBeTakenWithBiomaStrategy)
+                {
+                    <Card InnerCard="pile.Top" />
+                }
+            </div>
         </div>
     }
 
 </section>
+<CascadingValue Value="player">
+    <Hand OnCardSelected="OnCardSelected" />
+</CascadingValue>
 
-<section class="mt-10">
-    @foreach (var card in player.Cards)
+<article class="mx-8">
+
+    @if (selectedCard is not null)
     {
-        <Card InnerCard="card" />
+        <section class="flex justify-between">
+            <button class="@Styles.PrimaryInlineButton" type="button" @onclick="() => OnPlay(PlayStrategy.Number)">
+                Take cards with same numbers
+            </button>
+
+            <button class="@Styles.PrimaryInlineButton" type="button" @onclick="() => OnPlay(PlayStrategy.Bioma)">
+                Take cards with same biomas
+            </button>
+
+            <button class="@Styles.PrimaryInlineButton" type="button" @onclick="() => OnPlay(PlayStrategy.None)">
+                Take just this card
+            </button>
+        </section>
+
+        <section class="flex justify-center my-6">
+            <Card InnerCard="selectedCard" />
+        </section>
     }
-</section>
+</article>
+
+<article>
+    @player.Planet.Count cards
+</article>
 
 @code {
     private Core.Board board;
     private Core.Player player;
 
+    private Core.Card selectedCard;
+
     protected override void OnInitialized()
     {
         board = new Board();
         player = new Player(Enumerable.Range(0, 4).Select(x => board.DrawPile.Take()).ToList());
+    }
+
+    private void OnCardSelected(Core.Card card)
+    {
+        selectedCard = card;
+    }
+
+    private void OnPlay(Core.PlayStrategy strategy)
+    {
+        var cards = board.PlayCard(selectedCard, strategy).ToList();
+        player.Planet.AddRange(cards);
+        //StateHasChanged();
     }
 }
 
